@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 const { title = 'DevWiki', description = 'A small, curious wiki for useful ideas.' } = Astro.props;
+const base = import.meta.env.BASE_URL;
 ---
 <!doctype html>
 <html lang="en">
@@ -8,19 +9,19 @@ const { title = 'DevWiki', description = 'A small, curious wiki for useful ideas
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/devwiki-mark.svg" />
+    <link rel="icon" type="image/svg+xml" href={`${base}devwiki-mark.svg`} />
     <title>{title} — DevWiki</title>
   </head>
   <body class="font-sans antialiased">
     <header class="mx-auto flex max-w-6xl items-center justify-between px-6 py-7 lg:px-10">
-      <a href="/" class="flex items-center gap-3 text-ink" aria-label="DevWiki home">
-        <img src="/devwiki-mark.svg" alt="" class="size-11" />
+      <a href={base} class="flex items-center gap-3 text-ink" aria-label="DevWiki home">
+        <img src={`${base}devwiki-mark.svg`} alt="" class="size-11" />
         <span class="font-display text-xl">DevWiki</span>
       </a>
       <nav class="flex items-center gap-6 text-sm font-medium text-ink/65">
-        <a class="hover:text-moss" href="/">Home</a>
-        <a class="hidden hover:text-moss sm:block" href="/#about">About</a>
-        <a class="rounded-full border border-ink/15 px-4 py-2 hover:border-moss hover:text-moss" href="/articles">Browse notes</a>
+        <a class="hover:text-moss" href={base}>Home</a>
+        <a class="hidden hover:text-moss sm:block" href={`${base}#about`}>About</a>
+        <a class="rounded-full border border-ink/15 px-4 py-2 hover:border-moss hover:text-moss" href={`${base}articles`}>Browse notes</a>
       </nav>
     </header>
     <main><slot /></main>
