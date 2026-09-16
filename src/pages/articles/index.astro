@@ -3,10 +3,11 @@ import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import CategorySidebar from '../../components/CategorySidebar.astro';
 const notes = (await getCollection('articles')).sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
+const base = import.meta.env.BASE_URL;
 ---
 <Layout title="Library" description="Browse every DevWiki article.">
   <section class="mx-auto grid max-w-6xl gap-12 px-6 py-16 lg:grid-cols-[12rem_1fr] lg:px-10 lg:py-24">
     <CategorySidebar notes={notes} />
-    <div><p class="eyebrow text-accent">The library</p><h1 class="mt-4 max-w-2xl font-display text-6xl tracking-[-.035em] sm:text-7xl">All the notes,<br /><span class="text-moss">in one place.</span></h1><p class="mt-6 max-w-xl text-lg leading-8 text-ink/60">Short essays and practical rabbit holes, organized for wandering.</p><div class="mt-16 divide-y divide-ink/10 border-y border-ink/10">{notes.map((note, index) => <a href={`/articles/${note.id}`} class="group grid gap-3 py-7 sm:grid-cols-[4rem_1fr_auto] sm:items-center"><span class="font-mono text-xs text-ink/35">{String(index + 1).padStart(2, '0')}</span><div><span class="eyebrow text-moss/70">{note.data.category}</span><h2 class="mt-2 font-display text-2xl group-hover:text-moss">{note.data.title}</h2><p class="mt-1 text-sm text-ink/55">{note.data.description}</p></div><span class="font-mono text-xs text-ink/40">{note.data.minutes} min ↗</span></a>)}</div></div>
+    <div><p class="eyebrow text-accent">The library</p><h1 class="mt-4 max-w-2xl font-display text-6xl tracking-[-.035em] sm:text-7xl">All the notes,<br /><span class="text-moss">in one place.</span></h1><p class="mt-6 max-w-xl text-lg leading-8 text-ink/60">Short essays and practical rabbit holes, organized for wandering.</p><div class="mt-16 divide-y divide-ink/10 border-y border-ink/10">{notes.map((note, index) => <a href={`${base}articles/${note.id}`} class="group grid gap-3 py-7 sm:grid-cols-[4rem_1fr_auto] sm:items-center"><span class="font-mono text-xs text-ink/35">{String(index + 1).padStart(2, '0')}</span><div><span class="eyebrow text-moss/70">{note.data.category}</span><h2 class="mt-2 font-display text-2xl group-hover:text-moss">{note.data.title}</h2><p class="mt-1 text-sm text-ink/55">{note.data.description}</p></div><span class="font-mono text-xs text-ink/40">{note.data.minutes} min ↗</span></a>)}</div></div>
   </section>
 </Layout>
