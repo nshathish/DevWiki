@@ -8,7 +8,7 @@ const [owner = "nshathish", repo = "devwiki"] = (
 ).split("/");
 
 const site = process.env.ASTRO_SITE ?? `https://${owner}.github.io`;
-const base = repo === `${owner}.github.io` ? "/" : `/${repo}`;
+const base = repo === `${owner}.github.io` ? "/" : `/${repo}/`;
 
 export default defineConfig({
   site,
