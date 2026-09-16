@@ -1,0 +1,32 @@
+---
+import '../styles/global.css';
+const { title = 'DevWiki', description = 'A small, curious wiki for useful ideas.' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/devwiki-mark.svg" />
+    <title>{title} — DevWiki</title>
+  </head>
+  <body class="font-sans antialiased">
+    <header class="mx-auto flex max-w-6xl items-center justify-between px-6 py-7 lg:px-10">
+      <a href="/" class="flex items-center gap-3 text-ink" aria-label="DevWiki home">
+        <img src="/devwiki-mark.svg" alt="" class="size-11" />
+        <span class="font-display text-xl">DevWiki</span>
+      </a>
+      <nav class="flex items-center gap-6 text-sm font-medium text-ink/65">
+        <a class="hover:text-moss" href="/">Home</a>
+        <a class="hidden hover:text-moss sm:block" href="/#about">About</a>
+        <a class="rounded-full border border-ink/15 px-4 py-2 hover:border-moss hover:text-moss" href="/articles">Browse notes</a>
+      </nav>
+    </header>
+    <main><slot /></main>
+    <footer class="mx-auto mt-20 flex max-w-6xl flex-col gap-3 border-t border-ink/10 px-6 py-8 text-sm text-ink/55 sm:flex-row sm:items-center sm:justify-between lg:px-10">
+      <p>DevWiki is a small wiki for making sense of the world.</p>
+      <p class="font-mono text-xs">Built slowly · Updated often</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DevWiki uploader</title>
+    <style>
+      :root { color: #1c2925; background: #f7f5ef; font-family: Arial, sans-serif; }
+      body { margin: 0; min-height: 100vh; background: linear-gradient(135deg, #f7f5ef 55%, #dfe9df); }
+      main { width: min(680px, calc(100% - 40px)); margin: 0 auto; padding: 72px 0; }
+      .eyebrow { color: #e88f52; font: 700 11px/1.2 monospace; letter-spacing: .15em; text-transform: uppercase; }
+      h1 { margin: 12px 0; font: 500 clamp(42px, 8vw, 72px)/.98 Georgia, serif; letter-spacing: -.04em; }
+      .intro { color: #52625c; font-size: 17px; line-height: 1.6; max-width: 520px; }
+      form { margin-top: 42px; padding: 28px; border: 1px solid #1c292526; border-radius: 24px; background: #ffffff80; box-shadow: 0 18px 50px #1c292510; }
+      label { display: block; margin: 20px 0 8px; font-size: 13px; font-weight: 700; }
+      label:first-child { margin-top: 0; }
+      select, input[type="text"], input[type="file"] { box-sizing: border-box; width: 100%; padding: 13px 14px; border: 1px solid #1c292533; border-radius: 10px; color: #1c2925; background: #fff; font: inherit; }
+      input[type="file"] { padding: 11px; }
+      small { display: block; margin-top: 8px; color: #66756e; line-height: 1.5; }
+      button { margin-top: 26px; border: 0; border-radius: 999px; padding: 13px 20px; color: #f7f5ef; background: #315c4b; font-weight: 700; cursor: pointer; }
+      button:hover { background: #1c2925; }
+      #status { min-height: 24px; margin-top: 18px; color: #315c4b; font-size: 14px; line-height: 1.5; }
+      .danger { color: #a44930 !important; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Local content tool</p>
+      <h1>Add to DevWiki.</h1>
+      <p class="intro">Upload Markdown into your local content library. Missing frontmatter is filled in automatically from the file, folder, and content. This page only runs on your computer and is not part of the deployed Astro site.</p>
+      <form id="upload-form">
+        <label for="folder">Existing folder</label>
+        <select id="folder" name="folder"><option value="">Articles root</option></select>
+        <small>Choose a folder already inside <code>src/content/articles</code>.</small>
+        <label for="new-folder">Or create a nested folder</label>
+        <input id="new-folder" type="text" placeholder="e.g. notes/2024/design" autocomplete="off" />
+        <small>Typing a path here overrides the dropdown. Use folder names separated by <code>/</code>.</small>
+        <label for="files">Markdown files</label>
+        <input id="files" name="files" type="file" accept=".md,.mdx,text/markdown" multiple required />
+        <button type="submit">Save Markdown files →</button>
+        <p id="status" role="status"></p>
+      </form>
+    </main>
+    <script>
+      const folder = document.querySelector('#folder');
+      const newFolder = document.querySelector('#new-folder');
+      const form = document.querySelector('#upload-form');
+      const status = document.querySelector('#status');
+      fetch('/api/folders').then((response) => response.json()).then(({ folders }) => {
+        folder.innerHTML = folders.map((value) => `<option value="${value}">${value || 'Articles root'}</option>`).join('');
+      });
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        status.className = '';
+        status.textContent = 'Saving…';
+        const data = new FormData(form);
+        data.set('folder', newFolder.value.trim() || folder.value);
+        try {
+          const response = await fetch('/api/upload', { method: 'POST', body: data });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || 'Upload failed.');
+          status.textContent = `Saved ${result.saved.length} file${result.saved.length === 1 ? '' : 's'}: ${result.saved.join(', ')}`;
+          form.reset();
+          loadFolders();
+        } catch (error) { status.className = 'danger'; status.textContent = error.message; }
+      });
+      function loadFolders() { fetch('/api/folders').then((response) => response.json()).then(({ folders }) => { folder.innerHTML = folders.map((value) => `<option value="${value}">${value || 'Articles root'}</option>`).join(''); }); }
+    </script>
+  </body>
+</html>

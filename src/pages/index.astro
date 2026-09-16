@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+
+const notes = (await getCollection('articles')).sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
+const featured = notes.find((note) => note.data.featured) ?? notes[0];
+const recent = notes.filter((note) => note.id !== featured?.id).slice(0, 4);
+const formatDate = (date: Date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+---
+<Layout>
+  <section class="paper-grid border-y border-ink/10">
+    <div class="mx-auto grid max-w-6xl gap-12 px-6 py-20 lg:grid-cols-[1.15fr_.85fr] lg:px-10 lg:py-28">
+      <div class="max-w-2xl">
+        <p class="eyebrow mb-7 text-accent">A living pocket library</p>
+        <h1 class="font-display text-6xl leading-[.98] tracking-[-.04em] text-ink sm:text-8xl">Useful ideas,<br /><em class="text-moss">kept close.</em></h1>
+        <p class="mt-8 max-w-lg text-lg leading-8 text-ink/65">DevWiki is a quiet corner for technical documentation, practical notes, and the things worth remembering. Read a little. Follow a thread.</p>
+        <div class="mt-10 flex flex-wrap gap-3">
+          <a href="#featured" class="rounded-full bg-moss px-5 py-3 text-sm font-semibold text-paper hover:bg-ink">Read the featured note →</a>
+          <a href="/articles" class="rounded-full border border-ink/15 px-5 py-3 text-sm font-semibold hover:border-moss hover:text-moss">Explore the library</a>
+        </div>
+      </div>
+      <div class="flex items-end justify-start lg:justify-end">
+        <div class="relative max-w-sm rounded-[2rem] border border-moss/20 bg-sage/70 p-7 sm:p-9">
+          <span class="eyebrow text-moss">The premise</span>
+          <p class="mt-10 font-display text-3xl leading-tight text-moss">“A good note is a door left open for your future self.”</p>
+          <div class="mt-12 flex items-center justify-between border-t border-moss/15 pt-4 font-mono text-[10px] uppercase tracking-[.14em] text-moss/70"><span>Vol. 01</span><span>Since 2024</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="featured" class="mx-auto max-w-6xl px-6 py-16 lg:px-10 lg:py-20">
+    <div class="mb-8 flex items-end justify-between"><div><p class="eyebrow text-accent">Start here</p><h2 class="mt-2 font-display text-4xl">Featured note</h2></div><span class="font-mono text-xs text-ink/45">01 / {String(notes.length).padStart(2, '0')}</span></div>
+    {featured && <a href={`/articles/${featured.id}`} class="group grid gap-6 rounded-[1.5rem] border border-ink/10 bg-white/50 p-7 hover:border-moss/40 sm:p-10 lg:grid-cols-[1fr_auto]">
+      <div><div class="flex flex-wrap gap-2 text-xs text-moss"><span class="rounded-full bg-sage px-3 py-1">{featured.data.category}</span><span class="rounded-full border border-ink/10 px-3 py-1">{featured.data.minutes} min read</span></div><h3 class="mt-6 max-w-2xl font-display text-4xl leading-tight group-hover:text-moss sm:text-5xl">{featured.data.title}</h3><p class="mt-4 max-w-xl leading-7 text-ink/60">{featured.data.description}</p></div>
+      <div class="flex items-end font-mono text-xs text-ink/45">{formatDate(featured.data.published)} <span class="ml-3 text-xl text-accent transition-transform group-hover:translate-x-1">↗</span></div>
+    </a>}
+  </section>
+  <section id="about" class="mx-auto max-w-6xl px-6 pb-12 lg:px-10"><div class="mb-7 flex items-center justify-between"><div><p class="eyebrow text-accent">Keep exploring</p><h2 class="mt-2 font-display text-3xl">Recent notes</h2></div><a class="text-sm font-semibold text-moss hover:text-ink" href="/articles">View all →</a></div><div class="grid gap-4 md:grid-cols-2">{recent.map((note) => <a href={`/articles/${note.id}`} class="group rounded-2xl border border-ink/10 p-6 hover:border-moss/40 hover:bg-white/50"><div class="flex justify-between gap-4"><span class="eyebrow text-moss/70">{note.data.category}</span><span class="font-mono text-[10px] text-ink/40">{formatDate(note.data.published)}</span></div><h3 class="mt-5 font-display text-2xl group-hover:text-moss">{note.data.title}</h3><p class="mt-2 text-sm leading-6 text-ink/60">{note.data.description}</p></a>)}</div></section>
+</Layout>
